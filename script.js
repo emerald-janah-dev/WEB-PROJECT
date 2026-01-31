@@ -101,6 +101,26 @@
         });
     })();
 
+    /* Header scroll effect */
+    (function () {
+        var header = document.querySelector('header');
+        if (!header) return;
+
+        function updateHeaderOnScroll() {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }
+
+        // Update on scroll
+        window.addEventListener('scroll', updateHeaderOnScroll);
+        
+        // Initial check
+        updateHeaderOnScroll();
+    })();
+
     /* Navigation active state on scroll */
     (function () {
         var navLinks = document.querySelectorAll('nav a[href^="#"]');
