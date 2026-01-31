@@ -225,7 +225,11 @@ nav:hover a.active:hover::after {
     text-decoration: none;
     transition: opacity 0.2s, transform 0.2s;
 }
-.btn-cta:hover { opacity: 0.95; transform: translateY(-1px); }
+.btn-cta:hover { 
+    background: linear-gradient(135deg, #10b981, #059669);
+    opacity: 0.95; 
+    transform: scale(0.95); 
+}
 
 /* ----- Home / Hero ----- */
 #home {
