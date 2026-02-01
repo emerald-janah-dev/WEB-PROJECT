@@ -912,7 +912,7 @@ footer {
         left: 0;
         height: 100vh;
         /* keep drawer under half the viewport width on most devices */
-        width: clamp(160px, 40vw, 260px);
+        width: clamp(140px, 35vw, 220px);
         flex-direction: column;
         /* slightly transparent background so page shows beneath */
         background: rgba(255,255,255,0.92);
@@ -924,7 +924,7 @@ footer {
         transform: translateX(-100%); /* slide offscreen */
         pointer-events: none; /* don't block when hidden */
         backdrop-filter: blur(6px);
-        overflow: visible; /* allow decorative layers to extend */
+        overflow: hidden; /* clip decorative layers */
     }
 
     .nav-menu.active {
