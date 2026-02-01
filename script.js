@@ -101,4 +101,94 @@
         });
     })();
 
+    /* Header scroll effect */
+    (function () {
+        var header = document.querySelector('header');
+        if (!header) return;
+
+        function updateHeaderOnScroll() {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }
+
+        // Update on scroll
+        window.addEventListener('scroll', updateHeaderOnScroll);
+        
+        // Initial check
+        updateHeaderOnScroll();
+    })();
+
+    /* Navigation active state on scroll */
+    (function () {
+        var navLinks = document.querySelectorAll('nav a[href^="#"]');
+        var sections = Array.from(navLinks).map(function (link) {
+            var id = link.getAttribute('href').substring(1);
+            return document.getElementById(id);
+        }).filter(Boolean);
+
+        function updateActiveNav() {
+            var scrollY = window.pageYOffset;
+            var viewportHeight = window.innerHeight;
+            var activeSection = null;
+
+            sections.forEach(function (section) {
+                var rect = section.getBoundingClientRect();
+                var sectionTop = rect.top + scrollY;
+                var sectionBottom = sectionTop + rect.height;
+
+                // Consider section active if it's in the middle of viewport or takes up significant space
+                if (sectionTop <= scrollY + viewportHeight * 0.5 && sectionBottom > scrollY + viewportHeight * 0.3) {
+                    activeSection = section;
+                }
+            });
+
+            // If no section is in the middle, use the section at the top of viewport
+            if (!activeSection && sections.length > 0) {
+                var topSection = sections.reduce(function (closest, section) {
+                    var rect = section.getBoundingClientRect();
+                    var sectionTop = rect.top + scrollY;
+                    return Math.abs(sectionTop - scrollY) < Math.abs(closest.top - scrollY) 
+                        ? { top: sectionTop, section: section } 
+                        : closest;
+                }, { top: Infinity, section: null }).section;
+                activeSection = topSection;
+            }
+
+            // Update active states
+            navLinks.forEach(function (link) {
+                var id = link.getAttribute('href').substring(1);
+                var section = document.getElementById(id);
+                if (section === activeSection) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // Update on scroll and resize
+        window.addEventListener('scroll', updateActiveNav);
+        window.addEventListener('resize', updateActiveNav);
+        
+        // Initial update
+        updateActiveNav();
+
+        // Smooth scroll for navigation links
+        navLinks.forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                var id = link.getAttribute('href').substring(1);
+                var section = document.getElementById(id);
+                if (section) {
+                    var headerHeight = document.querySelector('header').offsetHeight;
+                    var sectionTop = section.offsetTop - headerHeight - 20;
+                    window.scrollTo({ top: sectionTop, behavior: 'smooth' });
+                }
+            });
+        });
+    })();
+
 })();
