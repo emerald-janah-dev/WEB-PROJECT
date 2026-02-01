@@ -41,6 +41,34 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
+/* Thin scrollbar with accent color */
+::-webkit-scrollbar {
+    width: 8px; /* slightly thin */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
+}
+
+/* Firefox scrollbar (thin with accent color) */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] * {
+    scrollbar-color: var(--accent) rgba(255, 255, 255, 0.04);
+}
+
 /* ----- Scroll reveal (smooth transitions when scrolling) ----- */
 .reveal-on-scroll {
     opacity: 0;
@@ -95,7 +123,8 @@ header {
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
     border-bottom: 1px solid var(--border);
-    padding: 1.25rem 0;
+    /* slightly reduced vertical space for a slimmer header */
+    padding: 0.8rem 0;
     transition: all 0.3s ease;
 }
 
@@ -117,25 +146,29 @@ header.scrolled {
 .header-inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
     padding: 0 1.5rem;
     position: relative;
-    min-height: 45px;
+    /* make header inner a bit tighter */
+    min-height: 40px;
 }
 
 .header-inner .logo {
-    position: absolute;
-    left: 1.5rem;
-    top: 50%;
-    transform: translateY(-50%);
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
     font-size: 1.6rem;
     color: var(--accent);
     text-decoration: none;
     z-index: 10;
+    white-space: nowrap;
+    margin-right: auto;
+    margin-top: 2rem;
 }
 
 .header-inner .logo span { 
@@ -143,15 +176,14 @@ header.scrolled {
 }
 
 .header-inner .container {
-    flex: 1;
-    display: flex;
+    flex: 0;
+    display: none;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: auto;
     max-width: none;
     padding: 0;
-    margin-left: 200px;
-    margin-right: 80px;
+    margin: 0;
 }
 
 .header-inner nav {
@@ -160,7 +192,7 @@ header.scrolled {
     gap: 0.5rem;
     flex-wrap: wrap;
     justify-content: center;
-    width: 100%;
+    width: auto;
 }
 nav a {
     color: var(--text);
@@ -245,15 +277,18 @@ nav:hover a.active:hover::after {
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
-.header-actions { display: flex; align-items: center; gap: 0.75rem; }
+.header-actions { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
+
+/* hide the in-drawer close button by default; show only at small widths */
+.nav-close { display: none; }
 
 .theme-toggle {
     background: transparent;
     border: none;
     color: var(--text);
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     cursor: pointer;
     display: grid;
     place-items: center;
@@ -275,13 +310,14 @@ nav:hover a.active:hover::after {
     background: transparent;
     border: none;
     color: var(--text);
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     cursor: pointer;
     display: grid;
     place-items: center;
     transition: color 0.2s, transform 0.2s;
+    margin-top: 0.2rem;
 }
 .theme-toggle:hover { color: var(--accent); transform: scale(1.1); }
 .btn-cta {
@@ -827,4 +863,192 @@ footer {
     
     .project-card { padding: 1rem; }
     .skill-badge { padding: 0.5rem 0.75rem; font-size: 0.85rem; }
+    
+    /* Header layout for mobile */
+    .header-inner {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        min-height: auto;
+    }
+    
+    .header-inner .logo {
+        position: static;
+        transform: none;
+        top: auto;
+        left: auto;
+        font-size: 1rem;
+        margin: 0;
+    }
+    
+    .header-inner .container {
+        display: none;
+    }
+    
+    .header-actions {
+        order: 3;
+        margin-left: auto;
+        display: flex;
+        gap: 0;
+    }
+    
+    /* Mobile Menu */
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: var(--text);
+        padding: 0.3rem;
+        margin-right: 0;
+    }
+    
+    /* left-side drawer for mobile */
+    .nav-menu {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        /* keep drawer under half the viewport width on most devices */
+        width: clamp(140px, 35vw, 220px);
+        flex-direction: column;
+        /* slightly transparent background so page shows beneath */
+        background: rgba(255,255,255,0.92);
+        padding: 1.25rem;
+        box-shadow: 2px 0 24px rgba(0,0,0,0.12);
+        z-index: 9999;
+        transition: transform 280ms ease;
+        -webkit-transform: translateZ(0);
+        transform: translateX(-100%); /* slide offscreen */
+        pointer-events: none; /* don't block when hidden */
+        backdrop-filter: blur(6px);
+        overflow: hidden; /* clip decorative layers */
+    }
+
+    .nav-menu.active {
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+
+    /* layered parallax decorative layers behind nav content */
+    .nav-menu::before,
+    .nav-menu::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms ease;
+    }
+
+    /* subtle different textures for the two layers */
+    .nav-menu::before {
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0));
+        transform: translateX(-14%);
+        opacity: 0.95;
+        filter: blur(6px);
+    }
+
+    .nav-menu::after {
+        background: linear-gradient(90deg, rgba(13,148,136,0.06), rgba(8,145,178,0));
+        transform: translateX(-28%);
+        opacity: 0.9;
+        filter: blur(10px);
+    }
+
+    /* bring nav content above layers */
+    .nav-menu > * { position: relative; z-index: 2; }
+
+    /* when open, move layers at different speeds for parallax */
+    .nav-menu.active::before { transform: translateX(6%); }
+    .nav-menu.active::after  { transform: translateX(18%); }
+
+    /* staggered reveal for links */
+    .nav-menu a { opacity: 0; transform: translateX(-8px); transition: opacity 320ms ease, transform 320ms ease; }
+    .nav-menu.active a { opacity: 1; transform: translateX(0); }
+    .nav-menu.active a:nth-of-type(1) { transition-delay: 0.06s; }
+    .nav-menu.active a:nth-of-type(2) { transition-delay: 0.1s; }
+    .nav-menu.active a:nth-of-type(3) { transition-delay: 0.14s; }
+    .nav-menu.active a:nth-of-type(4) { transition-delay: 0.18s; }
+    .nav-menu.active a:nth-of-type(5) { transition-delay: 0.22s; }
+
+    /* Dark theme: use a translucent dark background */
+    [data-theme="dark"] .nav-menu {
+        background: rgba(10,12,16,0.88);
+        box-shadow: 2px 0 24px rgba(0,0,0,0.36);
+    }
+
+    /* dim overlay inserted by JS when menu opens */
+    .nav-overlay {
+        display: none;
+    }
+    .nav-overlay.active {
+        display: block;
+        position: fixed;
+        inset: 0;
+        /* lighter dim so page doesn't feel too dark */
+        background: rgba(0,0,0,0.12);
+        /* allow interactions through the overlay so the page isn't fully blocked */
+        pointer-events: none;
+        z-index: 9998;
+    }
+
+    /* Close button inside the drawer (non-blocking overlay means an explicit close is helpful) */
+    .nav-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: transparent;
+        border: none;
+        color: var(--text);
+        font-size: 1.35rem;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+    }
+
+    [data-theme="dark"] .nav-close { color: var(--text); }
+    
+    /* On small screens remove heavy bottom borders and use a subtle between-item rule */
+    .nav-menu a {
+        padding: 0.75rem 0.5rem;
+        border-bottom: none;
+    }
+
+    /* subtle divider between items (not after the last) */
+    .nav-menu a + a {
+        border-top: 0.5px solid rgba(0,0,0,0.06);
+    }
+    .nav-menu a:last-child { border-top: none; }
+}
+
+/* Desktop - hide hamburger menu and show normal nav */
+@media (min-width: 361px) {
+    .header-inner .logo {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .nav-menu {
+        display: flex !important;
+    }
+}
+
+/* show the close button only on small screens (<=360px) */
+@media (max-width: 360px) {
+    .nav-close { display: grid; }
 }
