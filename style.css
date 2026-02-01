@@ -853,7 +853,7 @@ footer {
     .contact-form button { width: 100%; padding: 0.7rem 1rem; }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 768px) {
     .hero-text h1 { font-size: 1.4rem; }
     .hero-text .tagline { font-size: 0.95rem; }
     .btn-cta { font-size: 0.9rem; }
@@ -1033,7 +1033,7 @@ footer {
 }
 
 /* Desktop - hide hamburger menu and show normal nav */
-@media (min-width: 361px) {
+@media (min-width: 769px) {
     .header-inner .logo {
         top: 50%;
         transform: translateY(-50%);
@@ -1048,7 +1048,7 @@ footer {
     }
 }
 
-/* show the close button only on small screens (<=360px) */
-@media (max-width: 360px) {
+/* show the close button only on small screens (<=768px) */
+@media (max-width: 768px) {
     .nav-close { display: grid; }
 }
