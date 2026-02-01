@@ -317,7 +317,7 @@ nav:hover a.active:hover::after {
     display: grid;
     place-items: center;
     transition: color 0.2s, transform 0.2s;
-    margin-top: 0.2rem;
+    margin-top: 0.1rem;
 }
 .theme-toggle:hover { color: var(--accent); transform: scale(1.1); }
 .btn-cta {
