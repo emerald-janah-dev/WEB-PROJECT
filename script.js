@@ -161,6 +161,70 @@
         });
     })();
 
+    /* Mobile Menu */
+    (function () {
+        var mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        var mobileMenu = document.getElementById('mobileMenu');
+        var mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        var mobileThemeToggle = document.getElementById('mobileThemeToggle');
+
+        function toggleMobileMenu() {
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+            } else {
+                mobileMenu.classList.add('active');
+            }
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+        }
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        }
+
+        // Close menu when clicking on navigation links
+        mobileNavLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                // Remove any active states from all links
+                mobileNavLinks.forEach(function(navLink) {
+                    navLink.classList.remove('active');
+                });
+                closeMobileMenu();
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (mobileMenu && mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !mobileMenuToggle.contains(e.target) &&
+                !mobileThemeToggle.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // Sync mobile theme toggle with desktop theme toggle
+        if (mobileThemeToggle && themeToggle) {
+            mobileThemeToggle.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent event bubbling to keep dropdown open
+                e.preventDefault(); // Prevent any default behavior
+                themeToggle.click();
+            });
+            
+            // Also prevent clicks on SVG elements from closing the dropdown
+            const svgElements = mobileThemeToggle.querySelectorAll('svg');
+            svgElements.forEach(function(svg) {
+                svg.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    themeToggle.click();
+                });
+            });
+        }
+    })();
+
     /* Header scroll effect */
     (function () {
         var header = document.querySelector('header');
