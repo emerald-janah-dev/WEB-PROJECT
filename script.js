@@ -296,6 +296,8 @@
         // Update on scroll and resize
         window.addEventListener('scroll', updateActiveNav);
         window.addEventListener('resize', updateActiveNav);
+
+        //hello
         
         // Initial update
         updateActiveNav();
