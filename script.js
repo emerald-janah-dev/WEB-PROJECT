@@ -161,6 +161,67 @@
         });
     })();
 
+    // Pop Up
+    const memberCards = document.querySelectorAll('[data-target]');
+    const popupClose = document.querySelectorAll('[data-close-popup]');
+    const popupBackground = document.getElementById('popup-background');
+    const popupFooter = document.getElementById('popup-footer');
+
+    memberCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const popup = document.querySelector(card.dataset.target);
+            openpopup(popup);
+        });
+    });
+
+    popupClose.forEach(card => {
+        card.addEventListener('click', () => {
+            const popup = card.closest('.popup');
+            closepopup(popup);
+        });
+    });
+
+    popupFooter.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            const popup = link.closest('.popup');
+            closepopup(popup);
+        });
+    });
+
+    function openpopup(popup){
+        if (popup==null) return;
+        popup.classList.add('active');
+        popupBackground.classList.add('active');
+    }
+
+    function closepopup(popup){
+        if (popup==null) return;
+        popup.classList.remove('active');
+        popupBackground.classList.remove('active');
+    }
+
+    popupBackground.addEventListener('click', () => {
+        const popup=document.querySelectorAll('.popup.active');
+        popup.forEach(popup => {
+            closepopup(popup);
+        })
+    });
+
+    //Experience Dropdown Pop Up
+    const dropdowns=document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+        const select=dropdown.querySelector('.select');
+        const caret=dropdown.querySelector('.caret');
+        const description=dropdown.querySelector('.experience-description');
+
+        select.addEventListener('click', () => {
+            select.classList.toggle('select-clicked');
+            caret.classList.toggle('caret-rotate');
+            description.classList.toggle('experience-description-open');
+        });
+    });
+
     /* Mobile Menu */
     (function () {
         var mobileMenuToggle = document.getElementById('mobileMenuToggle');
