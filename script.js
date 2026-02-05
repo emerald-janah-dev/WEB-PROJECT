@@ -29,6 +29,66 @@
         setTheme(!isDark);
     });
 
+    /* Mobile menu toggle */
+    var menuToggle = document.getElementById('menuToggle');
+    var navMenu = document.getElementById('navMenu');
+    if (menuToggle && navMenu) {
+
+        // Close menu when a link is clicked
+        var navLinks = navMenu.querySelectorAll('a');
+        navLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Close menu when screen resizes to 361px or larger
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 360) {
+                navMenu.classList.remove('active');
+            }
+        });
+        
+        // Create overlay element and attach handlers to close when clicking outside
+        var navOverlay = document.createElement('div');
+        navOverlay.className = 'nav-overlay';
+        document.body.appendChild(navOverlay);
+
+        function openMenu() {
+            navMenu.classList.add('active');
+            navOverlay.classList.add('active');
+            // prevent body scroll while menu open
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            navMenu.classList.remove('active');
+            navOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Update toggle to use the open/close helpers
+        menuToggle.addEventListener('click', function (e) {
+            if (navMenu.classList.contains('active')) closeMenu(); else openMenu();
+            e.stopPropagation();
+        });
+
+        // overlay no longer captures pointer events (non-blocking); provide an explicit close button
+        var navClose = document.getElementById('navClose');
+        if (navClose) navClose.addEventListener('click', function () { closeMenu(); });
+
+        // Close when clicking outside nav or pressing Escape
+        document.addEventListener('click', function (e) {
+            if (!navMenu.contains(e.target) && !menuToggle.contains(e.target) && navMenu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && navMenu.classList.contains('active')) closeMenu();
+        });
+    }
+
     var backToTop = document.getElementById('backToTop');
     if (backToTop) backToTop.addEventListener('click', function () {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -99,6 +159,70 @@
                 root.classList.remove('card-scheme-active');
             });
         });
+    })();
+
+    /* Mobile Menu */
+    (function () {
+        var mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        var mobileMenu = document.getElementById('mobileMenu');
+        var mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        var mobileThemeToggle = document.getElementById('mobileThemeToggle');
+
+        function toggleMobileMenu() {
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+            } else {
+                mobileMenu.classList.add('active');
+            }
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+        }
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        }
+
+        // Close menu when clicking on navigation links
+        mobileNavLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                // Remove any active states from all links
+                mobileNavLinks.forEach(function(navLink) {
+                    navLink.classList.remove('active');
+                });
+                closeMobileMenu();
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (mobileMenu && mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !mobileMenuToggle.contains(e.target) &&
+                !mobileThemeToggle.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // Sync mobile theme toggle with desktop theme toggle
+        if (mobileThemeToggle && themeToggle) {
+            mobileThemeToggle.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent event bubbling to keep dropdown open
+                e.preventDefault(); // Prevent any default behavior
+                themeToggle.click();
+            });
+            
+            // Also prevent clicks on SVG elements from closing the dropdown
+            const svgElements = mobileThemeToggle.querySelectorAll('svg');
+            svgElements.forEach(function(svg) {
+                svg.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    themeToggle.click();
+                });
+            });
+        }
     })();
 
     /* Header scroll effect */
@@ -172,6 +296,8 @@
         // Update on scroll and resize
         window.addEventListener('scroll', updateActiveNav);
         window.addEventListener('resize', updateActiveNav);
+
+        //hello
         
         // Initial update
         updateActiveNav();
