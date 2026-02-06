@@ -761,7 +761,6 @@ font-size: 1.5rem;
 
 #popup-background{
     position: fixed;
-    opacity: 0;
     top: 0;
     bottom: 0;
     left: 0;
@@ -769,7 +768,9 @@ font-size: 1.5rem;
     background: rgba(0,0,0,0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
     pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
 #popup-background.active{
@@ -792,7 +793,7 @@ font-size: 1.5rem;
     background-color: var(--bg);
     max-width: 900px;
     border-radius: 20px;
-    padding: 3rem 3rem;
+    padding: 5rem 5rem;
     position: relative;
     z-index: 99;
     max-width: 70%;
@@ -841,7 +842,7 @@ font-size: 1.5rem;
 
 /* Pop Up About */
 
-#about{
+.about-section {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -856,15 +857,15 @@ font-size: 1.5rem;
     transition: transform 0.25s, box-shadow 0.25s, background 0.3s;
 }
 
-#about h3{
+.about-section h3{
     margin-bottom: 1rem;
 }
 
-#about p{
+.about-section p{
     text-align: justify;
 }
 
-#about:hover {
+.about-section:hover {
     transform: scale(1.01);
     box-shadow: var(--shadow-hover);
 }
@@ -892,7 +893,7 @@ font-size: 1.5rem;
     gap: 1.5rem;
 }
 
-#experience{
+.experience-section {
     padding: 3rem;
     margin-bottom: 6rem;
 }
@@ -902,31 +903,25 @@ font-size: 1.5rem;
     box-shadow: var(--shadow-hover);
 }
 
-.dropdown .select{
+.select{
     cursor: pointer;
     display: flex;
     justify-content: space-between;
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: var(--card-bg);
     border-radius: 16px;
     padding: 0.75rem 1.25rem;
     margin-bottom: 1.05rem ;
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
     transition: transform 0.25s, box-shadow 0.25s, background 0.3s;
-    pointer-events: auto !important;
 }
 
-.dropdown .select-clicked{
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+.select-clicked{
+    background: var(--card-bg);
     border-radius: 16px;
     padding: 0.75rem 1.25rem;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-hover);
-    pointer-events: auto !important;
 }
 
 .caret{
@@ -947,16 +942,14 @@ font-size: 1.5rem;
     border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: var(--shadow);
-    margin-right: auto;
-    margin-left: auto;
+    margin: 0 auto;
     padding: 2rem 1.25rem;
     text-align: justify;
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     opacity: 0;
     z-index: 999;
-    transition: 0.3s;
-    display: none ;
+    transition: opacity 0.3s, max-height 0.3s;
 }
 
 .experience-description-open{
@@ -966,7 +959,7 @@ font-size: 1.5rem;
 
 /* Pop Up Skills */
 
-#popup-skills{
+.skills-section{
     margin-bottom: 6rem;
     padding: 5rem 1.25rem;
     background-color: var(--bg);
@@ -974,18 +967,18 @@ font-size: 1.5rem;
 
 /* Pop Up References */
 
-#references{
+.references-section{
     padding: 5rem 1.25rem;
     display: flex;
     flex-direction: column;
     margin-bottom: 6rem;
 }
 
-#references h3{
+.references-section h3{
     margin-bottom: 1rem;
 }
 
-#references p{
+.references-section p{
     text-align: justify;
 }
 
@@ -1352,8 +1345,15 @@ footer {
         left: 50%;
     }
 
+    .profile-card .member-photo { width: 90px; height: 90px; font-size: 1.2rem; }
+    .popup { width: 90%; font-size: 0.85rem; }
+    .about-section {padding-top: 2rem; padding-bottom: 2.5rem;}
     .about-grid { grid-template-columns: 1fr; gap: 1rem; }
     .about-grid .about-card { padding: 1rem; }
+    .skills-section {padding-top: 2rem; padding-bottom: 2.5rem;}
+    .experience-section {padding-left: 1rem; padding-right: 1rem;}
+    .references-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .references-grid .references-card { padding: 1rem; }
     
     .projects-grid { grid-template-columns: 1fr; gap: 1rem; }
     .team-grid { grid-template-columns: 1fr; gap: 1rem; }
@@ -1388,8 +1388,14 @@ footer {
     .member-card { padding: 1.25rem; }
     .member-photo { width: 70px; height: 70px; font-size: 1.3rem; }
 
+    .profile-card
+    .profile-card .member-photo { width: 90px; height: 90px; font-size: 1.2rem; }
+    .popup { width: 95%; font-size: 0.85rem; }
+    .about-section {padding-top: 2rem; padding-bottom: 2.5rem;}
     .about-grid { grid-template-columns: 1fr; gap: 1rem; }
     .about-grid .about-card { padding: 1rem; }
+    .skills-section {padding-top: 2rem; padding-bottom: 2.5rem;}
+    .experience-section {padding-left: 1rem; padding-right: 1rem;}
     .references-grid { grid-template-columns: 1fr; gap: 1rem; }
     .references-grid .references-card { padding: 1rem; }
     
@@ -1407,15 +1413,17 @@ footer {
     
     .member-card { padding: 1rem; }
     .member-photo { width: 60px; height: 60px; font-size: 1.2rem; }
-
+    
     .profile-card .member-photo { width: 90px; height: 90px; font-size: 1.2rem; }
-    .popup { width: 90%;font-size: 0.85rem; }
+    .popup { width: 90%; font-size: 0.85rem; }
+    .about-section {padding-top: 2rem; padding-bottom: 2.5rem;}
     .about-grid { grid-template-columns: 1fr; gap: 1rem; }
     .about-grid .about-card { padding: 1rem; }
-    #experience {padding-left: 1rem; padding-right: 1rem;}
+    .skills-section {padding-top: 2rem; padding-bottom: 2.5rem;}
+    .experience-section {padding-left: 1rem; padding-right: 1rem;}
     .references-grid { grid-template-columns: 1fr; gap: 1rem; }
     .references-grid .references-card { padding: 1rem; }
-    
+
     .project-card { padding: 1rem; }
     .skill-badge { padding: 0.5rem 0.75rem; font-size: 0.85rem; }
     
