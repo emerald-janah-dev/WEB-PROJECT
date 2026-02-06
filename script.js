@@ -378,56 +378,83 @@
         });
     })();
 
-    /* Projects scroll indicator: create an animated progress bar under each .projects-grid */
-    (function(){
-        var grids = document.querySelectorAll('.projects-grid');
-        if(!grids || !grids.length) return;
+    // Carousel scroll controls
+    (function() {
+        var grid = document.getElementById('projectsGrid');
+        var btnLeft = document.getElementById('scrollLeft');
+        var btnRight = document.getElementById('scrollRight');
 
-        grids.forEach(function(grid){
-            // create indicator elements
-            var indicator = document.createElement('div');
-            indicator.className = 'projects-scroll-indicator';
-            var track = document.createElement('div'); track.className = 'track';
-            var bar = document.createElement('div'); bar.className = 'bar';
-            var thumb = document.createElement('div'); thumb.className = 'thumb pulse';
-            track.appendChild(bar);
-            indicator.appendChild(track);
-            indicator.appendChild(thumb);
+        if (!grid || !btnLeft || !btnRight) return;
 
-            // insert after grid
-            grid.parentNode.insertBefore(indicator, grid.nextSibling);
+        function updateButtons() {
+            var hasScrollLeft = grid.scrollLeft > 0;
+            var hasScrollRight = grid.scrollLeft < grid.scrollWidth - grid.clientWidth - 10;
 
-            function update(){
-                var scrollLeft = grid.scrollLeft;
-                var maxScroll = grid.scrollWidth - grid.clientWidth;
-                var pct = maxScroll > 0 ? (scrollLeft / maxScroll) : 0;
-                // width of visible area relative to total
-                var visiblePct = grid.clientWidth / grid.scrollWidth;
-                var barWidthPct = Math.max(6, visiblePct * 100);
-                bar.style.width = (visiblePct * 100) + '%';
-                // position thumb at center of bar progress
-                var trackWidth = track.clientWidth || 1;
-                var thumbLeft = Math.min(trackWidth - thumb.offsetWidth, Math.max(0, pct * (trackWidth - thumb.offsetWidth)));
-                thumb.style.left = (thumbLeft) + 'px';
-                // also move bar's translate to reflect start position
-                bar.style.transform = 'translateX(' + (pct * (trackWidth - (trackWidth * visiblePct))) + 'px)';
-            }
+            btnLeft.disabled = !hasScrollLeft;
+            btnRight.disabled = !hasScrollRight;
+        }
 
-            // click-to-jump on track
-            track.addEventListener('click', function(e){
-                var rect = track.getBoundingClientRect();
-                var clickX = e.clientX - rect.left;
-                var clickPct = clickX / rect.width;
-                var targetScroll = Math.max(0, Math.round(clickPct * (grid.scrollWidth - grid.clientWidth)));
-                grid.scrollTo({ left: targetScroll, behavior: 'smooth' });
+        function scroll(direction) {
+            var scrollAmount = 350;
+            var newScrollLeft = direction === 'left'
+                ? grid.scrollLeft - scrollAmount
+                : grid.scrollLeft + scrollAmount;
+
+            grid.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+        }
+
+        btnLeft.addEventListener('click', function() { scroll('left'); });
+        btnRight.addEventListener('click', function() { scroll('right'); });
+        grid.addEventListener('scroll', updateButtons);
+
+        // Initial state
+        updateButtons();
+
+        // Throttle helper for smooth performance
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // 3D Tilt effect on cards
+        var cards = document.querySelectorAll('.project-card');
+        cards.forEach(function(card) {
+            const throttledTilt = throttle(function(e) {
+                var rect = card.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+
+                var rotateY = ((x / rect.width) - 0.5) * 30;
+                var rotateX = -((y / rect.height) - 0.5) * 30;
+
+                card.style.setProperty('--rotateX', rotateX + 'deg');
+                card.style.setProperty('--rotateY', rotateY + 'deg');
+            }, 16);  // ~60fps throttle
+
+            card.addEventListener('mousemove', throttledTilt, { passive: true });
+
+            card.addEventListener('mouseleave', function() {
+                card.style.setProperty('--rotateX', '0deg');
+                card.style.setProperty('--rotateY', '0deg');
             });
+        });
+    })();
 
-            // wire scroll + resize
-            grid.addEventListener('scroll', update, { passive: true });
-            window.addEventListener('resize', update);
-
-            // initial
-            setTimeout(update, 120);
+    /* Flip card functionality */
+    (function() {
+        var projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach(function(card) {
+            card.addEventListener('click', function() {
+                this.classList.toggle('flipped');
+            });
         });
     })();
 
