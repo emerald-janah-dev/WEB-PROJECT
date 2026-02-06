@@ -308,7 +308,7 @@
 
     /* Navigation active state on scroll */
     (function () {
-        var navLinks = document.querySelectorAll('nav a[href^="#"]');
+        var navLinks = document.querySelectorAll('nav a[href^="#"], .btn-cta[href^="#"]');
         var sections = Array.from(navLinks).map(function (link) {
             var id = link.getAttribute('href').substring(1);
             return document.getElementById(id);
