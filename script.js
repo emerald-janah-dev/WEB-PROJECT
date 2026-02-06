@@ -1,3 +1,4 @@
+
 (function () {
     var themeKey = 'codewave-theme';
     var html = document.documentElement;
@@ -155,16 +156,11 @@
 
             card.addEventListener('mouseleave', function () {
                 // remove inline overrides so CSS theme rules take effect again
-                if (popupColorLocked) return;
-                
                 varNames.forEach(function (varName) { root.style.removeProperty(varName); });
                 root.classList.remove('card-scheme-active');
             });
         });
     })();
-
-    let popupColorLocked = false;
-    let popupSourceCard = null;
 
     // Pop Up
     const memberCards = document.querySelectorAll('[data-target]');
@@ -174,13 +170,6 @@
     memberCards.forEach(card => {
         card.addEventListener('click', () => {
             const popup = document.querySelector(card.dataset.target);
-            if (popup==null) return;
-            
-            popupColorLocked = true;
-            popupSourceCard = card;
-
-            card.dispatchEvent(new Event('mouseenter'));
-
             openpopup(popup);
         });
     });
@@ -202,13 +191,6 @@
         if (popup==null) return;
         popup.classList.remove('active');
         popupBackground.classList.remove('active');
-
-        popupColorLocked = false;
-        popupSourceCard = null;
-
-        document.documentElement.classList.remove('card-scheme-active');
-        ['--accent', '--blue', '--bg', '--text', '--photo-text']
-        .forEach(v => document.documentElement.style.removeProperty(v));
     }
 
     popupBackground.addEventListener('click', () => {
