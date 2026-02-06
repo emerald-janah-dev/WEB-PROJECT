@@ -903,10 +903,24 @@ html[data-theme="dark"] .hero-text h1 .highlight {
 
 /* ----- Projects ----- */
 .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    display: flex;
     gap: 1.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
 }
+.projects-grid > .project-card {
+    flex: 0 0 320px;
+    min-width: 280px;
+}
+
+/* hide native scrollbar for projects scroller while keeping scroll functionality */
+.projects-grid {
+    -ms-overflow-style: none; /* IE 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+.projects-grid::-webkit-scrollbar { height: 0; }
 .project-card {
     background: var(--card-bg);
     border-radius: 16px;
@@ -950,6 +964,61 @@ html[data-theme="dark"] .hero-text h1 .highlight {
     gap: 0.35rem;
 }
 .project-card a:hover { text-decoration: underline; }
+
+/* ----- Projects scroll indicator ----- */
+.projects-scroll-indicator {
+    height: 8px;
+    width: 100%;
+    margin-top: 0.75rem;
+    position: relative;
+    overflow: visible;
+}
+.projects-scroll-indicator .track {
+    height: 6px;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(0,0,0,0.04), rgba(0,0,0,0.02));
+    border-radius: 6px;
+    position: relative;
+}
+.projects-scroll-indicator .bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 6px;
+    background: linear-gradient(270deg, rgba(13,148,136,0.95), rgba(14,165,164,0.95), rgba(8,145,178,0.95));
+    background-size: 200% 100%;
+    box-shadow: 0 6px 18px rgba(8,145,178,0.12), inset 0 -2px 6px rgba(0,0,0,0.06);
+    transition: width 220ms cubic-bezier(.22,1,.36,1);
+    animation: gradient-slide 3.5s linear infinite;
+}
+.projects-scroll-indicator .thumb {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 6px 18px rgba(8,145,178,0.18);
+    border: 3px solid rgba(255,255,255,0.6);
+    transition: left 220ms cubic-bezier(.22,1,.36,1), transform 300ms;
+    will-change: left;
+}
+.projects-scroll-indicator .thumb.pulse { animation: pulse 1.8s infinite; }
+
+@keyframes gradient-slide {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes pulse {
+    0% { transform: translateY(-50%) scale(1); opacity: 1; }
+    50% { transform: translateY(-50%) scale(1.12); opacity: 0.9; }
+    100% { transform: translateY(-50%) scale(1); opacity: 1; }
+}
+
+/* Make the indicator more prominent on hover */
+.projects-grid:hover + .projects-scroll-indicator .bar { transform: translateY(-1px); }
+.projects-grid:hover + .projects-scroll-indicator .thumb { transform: translateY(-60%) scale(1.05); }
 
 /* ----- Skills ----- */
 #skills { background: var(--bg-alt); }
@@ -1139,20 +1208,19 @@ footer {
     .hero-content { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
     .hero-visual { max-width: 400px; margin: 0 auto; }
     .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
-    .projects-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    .projects-grid { display:flex; gap:1rem; overflow-x:auto; padding-bottom:0.5rem; }
     .team-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
 }
 
 @media (max-width: 768px) {
+    /* General container and header adjustments */
     .container { max-width: 540px; }
-    
     .header-inner { 
         flex-direction: column; 
         align-items: stretch; 
         padding: 1rem 1rem;
         min-height: auto;
     }
-    
     .header-inner .logo {
         position: static;
         transform: none;
@@ -1162,34 +1230,97 @@ footer {
         top: auto;
         font-size: 2rem;
     }
-    
-    .header-inner .container {
-        display: none;
-    }
-    
-    .header-inner nav {
-        display: none;
-    }
-    
-    .desktop-toggle {
-        display: none;
-    }
-    
-    .mobile-menu-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
+    .header-inner .container { display: none; }
+    .header-inner nav { display: none; }
+    .desktop-toggle { display: none; }
+    .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; }
     .header-actions { justify-content: center; }
-    
+
+    /* Hero / CTA sizing */
     .hero-text h1 { font-size: clamp(2rem, 4vw, 2.8rem); }
     .hero-text .tagline { font-size: 1.2rem; }
     .btn-cta { padding: 0.7rem 1.5rem; font-size: 1rem; }
-    
+
+    /* Footer layout */
     .footer-inner { grid-template-columns: 1fr; text-align: center; gap: 1.5rem; }
     .footer-links { align-items: center; }
     .footer-bottom { flex-direction: column; }
+
+    /* Smaller-screen adjustments (merged from other mobile blocks) */
+    .hero-text h1 { font-size: 1.4rem; }
+    .hero-text .tagline { font-size: 0.95rem; }
+    .btn-cta { font-size: 0.9rem; }
+
+    .member-card { padding: 1rem; }
+    .member-photo { width: 60px; height: 60px; font-size: 1.2rem; }
+
+    .profile-card .member-photo { width: 90px; height: 90px; font-size: 1.2rem; }
+    .popup { width: 90%; font-size: 0.85rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .about-grid .about-card { padding: 1rem; }
+    #experience { padding-left: 1rem; padding-right: 1rem; }
+    .references-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .references-grid .references-card { padding: 1rem; }
+
+    .project-card { padding: 1rem; }
+    .skill-badge { padding: 0.5rem 0.75rem; font-size: 0.85rem; }
+
+    /* Header layout tweaks used on small screens */
+    .header-inner {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        min-height: auto;
+    }
+    .header-inner .logo { position: static; transform: none; top: auto; left: auto; font-size: 1rem; margin: 0; }
+    .header-inner .container { display: none; }
+    .header-actions { order: 3; margin-left: auto; display: flex; gap: 0; }
+
+    /* Mobile menu and nav drawer */
+    .menu-toggle { display: block; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text); padding: 0.3rem; margin-right: 0; }
+    .nav-menu {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: clamp(140px, 35vw, 220px);
+        flex-direction: column;
+        background: rgba(255,255,255,0.92);
+        padding: 1.25rem;
+        box-shadow: 2px 0 24px rgba(0,0,0,0.12);
+        z-index: 9999;
+        transition: transform 280ms ease;
+        -webkit-transform: translateZ(0);
+        transform: translateX(-100%);
+        pointer-events: none;
+        backdrop-filter: blur(6px);
+        overflow: hidden;
+    }
+    .nav-menu.active { transform: translateX(0); pointer-events: auto; }
+    .nav-menu::before, .nav-menu::after { content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms ease; }
+    .nav-menu::before { background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0)); transform: translateX(-14%); opacity: 0.95; filter: blur(6px); }
+    .nav-menu::after { background: linear-gradient(90deg, rgba(13,148,136,0.06), rgba(8,145,178,0)); transform: translateX(-28%); opacity: 0.9; filter: blur(10px); }
+    .nav-menu > * { position: relative; z-index: 2; }
+    .nav-menu.active::before { transform: translateX(6%); }
+    .nav-menu.active::after  { transform: translateX(18%); }
+    .nav-menu a { opacity: 0; transform: translateX(-8px); transition: opacity 320ms ease, transform 320ms ease; }
+    .nav-menu.active a { opacity: 1; transform: translateX(0); }
+    .nav-menu.active a:nth-of-type(1) { transition-delay: 0.06s; }
+    .nav-menu.active a:nth-of-type(2) { transition-delay: 0.1s; }
+    .nav-menu.active a:nth-of-type(3) { transition-delay: 0.14s; }
+    .nav-menu.active a:nth-of-type(4) { transition-delay: 0.18s; }
+    .nav-menu.active a:nth-of-type(5) { transition-delay: 0.22s; }
+    [data-theme="dark"] .nav-menu { background: rgba(10,12,16,0.88); box-shadow: 2px 0 24px rgba(0,0,0,0.36); }
+    .nav-overlay { display: none; }
+    .nav-overlay.active { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.12); pointer-events: none; z-index: 9998; }
+    .nav-close { position: absolute; top: 0.5rem; right: 0.5rem; background: transparent; border: none; color: var(--text); font-size: 1.35rem; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; display: grid; place-items: center; }
+    [data-theme="dark"] .nav-close { color: var(--text); }
+    .nav-menu a { padding: 0.75rem 0.5rem; border-bottom: none; }
+    .nav-menu a + a { border-top: 0.5px solid rgba(0,0,0,0.06); }
+    .nav-menu a:last-child { border-top: none; }
 }
 
 /* Desktop styles (above 768px) */
@@ -1233,7 +1364,7 @@ footer {
     .about-grid { grid-template-columns: 1fr; gap: 1rem; }
     .about-grid .about-card { padding: 1rem; }
     
-    .projects-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .projects-grid { display:flex; gap:0.75rem; overflow-x:auto; padding-bottom:0.5rem; }
     .team-grid { grid-template-columns: 1fr; gap: 1rem; }
     
     .skills-wrap { gap: 0.75rem; }
@@ -1278,192 +1409,6 @@ footer {
     .contact-form button { width: 100%; padding: 0.7rem 1rem; }
 }
 
-@media (max-width: 768px) {
-    .hero-text h1 { font-size: 1.4rem; }
-    .hero-text .tagline { font-size: 0.95rem; }
-    .btn-cta { font-size: 0.9rem; }
-    
-    .member-card { padding: 1rem; }
-    .member-photo { width: 60px; height: 60px; font-size: 1.2rem; }
-
-    .profile-card .member-photo { width: 90px; height: 90px; font-size: 1.2rem; }
-    .popup { width: 90%;font-size: 0.85rem; }
-    .about-grid { grid-template-columns: 1fr; gap: 1rem; }
-    .about-grid .about-card { padding: 1rem; }
-    #experience {padding-left: 1rem; padding-right: 1rem;}
-    .references-grid { grid-template-columns: 1fr; gap: 1rem; }
-    .references-grid .references-card { padding: 1rem; }
-    
-    .project-card { padding: 1rem; }
-    .skill-badge { padding: 0.5rem 0.75rem; font-size: 0.85rem; }
-    
-    /* Header layout for mobile */
-    .header-inner {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        min-height: auto;
-    }
-    
-    .header-inner .logo {
-        position: static;
-        transform: none;
-        top: auto;
-        left: auto;
-        font-size: 1rem;
-        margin: 0;
-    }
-    
-    .header-inner .container {
-        display: none;
-    }
-    
-    .header-actions {
-        order: 3;
-        margin-left: auto;
-        display: flex;
-        gap: 0;
-    }
-    
-    /* Mobile Menu */
-    .menu-toggle {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 1.2rem;
-        cursor: pointer;
-        color: var(--text);
-        padding: 0.3rem;
-        margin-right: 0;
-    }
-    
-    /* left-side drawer for mobile */
-    .nav-menu {
-        display: flex;
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        /* keep drawer under half the viewport width on most devices */
-        width: clamp(140px, 35vw, 220px);
-        flex-direction: column;
-        /* slightly transparent background so page shows beneath */
-        background: rgba(255,255,255,0.92);
-        padding: 1.25rem;
-        box-shadow: 2px 0 24px rgba(0,0,0,0.12);
-        z-index: 9999;
-        transition: transform 280ms ease;
-        -webkit-transform: translateZ(0);
-        transform: translateX(-100%); /* slide offscreen */
-        pointer-events: none; /* don't block when hidden */
-        backdrop-filter: blur(6px);
-        overflow: hidden; /* clip decorative layers */
-    }
-
-    .nav-menu.active {
-        transform: translateX(0);
-        pointer-events: auto;
-    }
-
-    /* layered parallax decorative layers behind nav content */
-    .nav-menu::before,
-    .nav-menu::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none;
-        transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms ease;
-    }
-
-    /* subtle different textures for the two layers */
-    .nav-menu::before {
-        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0));
-        transform: translateX(-14%);
-        opacity: 0.95;
-        filter: blur(6px);
-    }
-
-    .nav-menu::after {
-        background: linear-gradient(90deg, rgba(13,148,136,0.06), rgba(8,145,178,0));
-        transform: translateX(-28%);
-        opacity: 0.9;
-        filter: blur(10px);
-    }
-
-    /* bring nav content above layers */
-    .nav-menu > * { position: relative; z-index: 2; }
-
-    /* when open, move layers at different speeds for parallax */
-    .nav-menu.active::before { transform: translateX(6%); }
-    .nav-menu.active::after  { transform: translateX(18%); }
-
-    /* staggered reveal for links */
-    .nav-menu a { opacity: 0; transform: translateX(-8px); transition: opacity 320ms ease, transform 320ms ease; }
-    .nav-menu.active a { opacity: 1; transform: translateX(0); }
-    .nav-menu.active a:nth-of-type(1) { transition-delay: 0.06s; }
-    .nav-menu.active a:nth-of-type(2) { transition-delay: 0.1s; }
-    .nav-menu.active a:nth-of-type(3) { transition-delay: 0.14s; }
-    .nav-menu.active a:nth-of-type(4) { transition-delay: 0.18s; }
-    .nav-menu.active a:nth-of-type(5) { transition-delay: 0.22s; }
-
-    /* Dark theme: use a translucent dark background */
-    [data-theme="dark"] .nav-menu {
-        background: rgba(10,12,16,0.88);
-        box-shadow: 2px 0 24px rgba(0,0,0,0.36);
-    }
-
-    /* dim overlay inserted by JS when menu opens */
-    .nav-overlay {
-        display: none;
-    }
-    .nav-overlay.active {
-        display: block;
-        position: fixed;
-        inset: 0;
-        /* lighter dim so page doesn't feel too dark */
-        background: rgba(0,0,0,0.12);
-        /* allow interactions through the overlay so the page isn't fully blocked */
-        pointer-events: none;
-        z-index: 9998;
-    }
-
-    /* Close button inside the drawer (non-blocking overlay means an explicit close is helpful) */
-    .nav-close {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        background: transparent;
-        border: none;
-        color: var(--text);
-        font-size: 1.35rem;
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-        cursor: pointer;
-        display: grid;
-        place-items: center;
-    }
-
-    [data-theme="dark"] .nav-close { color: var(--text); }
-    
-    /* On small screens remove heavy bottom borders and use a subtle between-item rule */
-    .nav-menu a {
-        padding: 0.75rem 0.5rem;
-        border-bottom: none;
-    }
-
-    /* subtle divider between items (not after the last) */
-    .nav-menu a + a {
-        border-top: 0.5px solid rgba(0,0,0,0.06);
-    }
-    .nav-menu a:last-child { border-top: none; }
-}
 
 /* Desktop - hide hamburger menu and show normal nav */
 @media (min-width: 769px) {
@@ -1481,7 +1426,3 @@ footer {
     }
 }
 
-/* show the close button only on small screens (<=768px) */
-@media (max-width: 768px) {
-    .nav-close { display: grid; }
-}

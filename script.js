@@ -378,4 +378,57 @@
         });
     })();
 
+    /* Projects scroll indicator: create an animated progress bar under each .projects-grid */
+    (function(){
+        var grids = document.querySelectorAll('.projects-grid');
+        if(!grids || !grids.length) return;
+
+        grids.forEach(function(grid){
+            // create indicator elements
+            var indicator = document.createElement('div');
+            indicator.className = 'projects-scroll-indicator';
+            var track = document.createElement('div'); track.className = 'track';
+            var bar = document.createElement('div'); bar.className = 'bar';
+            var thumb = document.createElement('div'); thumb.className = 'thumb pulse';
+            track.appendChild(bar);
+            indicator.appendChild(track);
+            indicator.appendChild(thumb);
+
+            // insert after grid
+            grid.parentNode.insertBefore(indicator, grid.nextSibling);
+
+            function update(){
+                var scrollLeft = grid.scrollLeft;
+                var maxScroll = grid.scrollWidth - grid.clientWidth;
+                var pct = maxScroll > 0 ? (scrollLeft / maxScroll) : 0;
+                // width of visible area relative to total
+                var visiblePct = grid.clientWidth / grid.scrollWidth;
+                var barWidthPct = Math.max(6, visiblePct * 100);
+                bar.style.width = (visiblePct * 100) + '%';
+                // position thumb at center of bar progress
+                var trackWidth = track.clientWidth || 1;
+                var thumbLeft = Math.min(trackWidth - thumb.offsetWidth, Math.max(0, pct * (trackWidth - thumb.offsetWidth)));
+                thumb.style.left = (thumbLeft) + 'px';
+                // also move bar's translate to reflect start position
+                bar.style.transform = 'translateX(' + (pct * (trackWidth - (trackWidth * visiblePct))) + 'px)';
+            }
+
+            // click-to-jump on track
+            track.addEventListener('click', function(e){
+                var rect = track.getBoundingClientRect();
+                var clickX = e.clientX - rect.left;
+                var clickPct = clickX / rect.width;
+                var targetScroll = Math.max(0, Math.round(clickPct * (grid.scrollWidth - grid.clientWidth)));
+                grid.scrollTo({ left: targetScroll, behavior: 'smooth' });
+            });
+
+            // wire scroll + resize
+            grid.addEventListener('scroll', update, { passive: true });
+            window.addEventListener('resize', update);
+
+            // initial
+            setTimeout(update, 120);
+        });
+    })();
+
 })();
