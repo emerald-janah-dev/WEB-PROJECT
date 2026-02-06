@@ -165,7 +165,6 @@
     const memberCards = document.querySelectorAll('[data-target]');
     const popupClose = document.querySelectorAll('[data-close-popup]');
     const popupBackground = document.getElementById('popup-background');
-    const popupFooter = document.getElementById('popup-footer');
 
     memberCards.forEach(card => {
         card.addEventListener('click', () => {
@@ -174,14 +173,7 @@
         });
     });
 
-    popupClose.forEach(card => {
-        card.addEventListener('click', () => {
-            const popup = card.closest('.popup');
-            closepopup(popup);
-        });
-    });
-
-    popupFooter.querySelectorAll('a').forEach(link => {
+    document.querySelectorAll('.popup-footer a').forEach(link => {
         link.addEventListener('click', () => {
             const popup = link.closest('.popup');
             closepopup(popup);
@@ -207,13 +199,20 @@
         })
     });
 
+    popupClose.forEach(card => {
+        card.addEventListener('click', () => {
+            const popup = card.closest('.popup');
+            closepopup(popup);
+        });
+    });
+
     //Experience Dropdown Pop Up
-    const dropdowns=document.querySelectorAll('.dropdown');
+    const dropdowns = document.querySelectorAll('.dropdown');
 
     dropdowns.forEach(dropdown => {
-        const select=dropdown.querySelector('.select');
-        const caret=dropdown.querySelector('.caret');
-        const description=dropdown.querySelector('.experience-description');
+        const select = dropdown.querySelector('.select');
+        const caret = dropdown.querySelector('.caret');
+        const description = dropdown.querySelector('.experience-description');
 
         select.addEventListener('click', () => {
             select.classList.toggle('select-clicked');
@@ -374,6 +373,86 @@
                     var sectionTop = section.offsetTop - headerHeight - 20;
                     window.scrollTo({ top: sectionTop, behavior: 'smooth' });
                 }
+            });
+        });
+    })();
+
+    // Carousel scroll controls
+    (function() {
+        var grid = document.getElementById('projectsGrid');
+        var btnLeft = document.getElementById('scrollLeft');
+        var btnRight = document.getElementById('scrollRight');
+
+        if (!grid || !btnLeft || !btnRight) return;
+
+        function updateButtons() {
+            var hasScrollLeft = grid.scrollLeft > 0;
+            var hasScrollRight = grid.scrollLeft < grid.scrollWidth - grid.clientWidth - 10;
+
+            btnLeft.disabled = !hasScrollLeft;
+            btnRight.disabled = !hasScrollRight;
+        }
+
+        function scroll(direction) {
+            var scrollAmount = 350;
+            var newScrollLeft = direction === 'left'
+                ? grid.scrollLeft - scrollAmount
+                : grid.scrollLeft + scrollAmount;
+
+            grid.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+        }
+
+        btnLeft.addEventListener('click', function() { scroll('left'); });
+        btnRight.addEventListener('click', function() { scroll('right'); });
+        grid.addEventListener('scroll', updateButtons);
+
+        // Initial state
+        updateButtons();
+
+        // Throttle helper for smooth performance
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // 3D Tilt effect on cards
+        var cards = document.querySelectorAll('.project-card');
+        cards.forEach(function(card) {
+            const throttledTilt = throttle(function(e) {
+                var rect = card.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+
+                var rotateY = ((x / rect.width) - 0.5) * 30;
+                var rotateX = -((y / rect.height) - 0.5) * 30;
+
+                card.style.setProperty('--rotateX', rotateX + 'deg');
+                card.style.setProperty('--rotateY', rotateY + 'deg');
+            }, 16);  // ~60fps throttle
+
+            card.addEventListener('mousemove', throttledTilt, { passive: true });
+
+            card.addEventListener('mouseleave', function() {
+                card.style.setProperty('--rotateX', '0deg');
+                card.style.setProperty('--rotateY', '0deg');
+            });
+        });
+    })();
+
+    /* Flip card functionality */
+    (function() {
+        var projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach(function(card) {
+            card.addEventListener('click', function() {
+                this.classList.toggle('flipped');
             });
         });
     })();
