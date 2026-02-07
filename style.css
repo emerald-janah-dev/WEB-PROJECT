@@ -837,6 +837,10 @@ font-size: 1.5rem;
     align-content: center;
 }
 
+.popup h3{
+    color: var(--text);
+}
+
 /* Profile */
 .profile-card {
     background-color: var(--bg);
